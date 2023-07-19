@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+  <h2 class="text-center mt-4">Recognition Details</h2>
+  <div class="row mt-4">
+    <div class="col-md-6 text-center">
+      <h5>ID Image</h5>
+      {% if recognition.id_image %}
+        <img src="{{ recognition.id_image.url }}" style="height:300px" alt="{{ recognition.name }}" class="img-fluid rounded">
+      {% else %}
+        Image N/A
+      {% endif %}
+    </div>
+    <div class="col-md-6 text-center">
+      <h5>Live Image</h5>
+      {% if live_images.exists %}
+        <img src="{{ live_images.first.image.url }}" style="height:300px" alt="Live Image" class="img-fluid rounded">
+      {% else %}
+        Image N/A
+      {% endif %}
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12 text-center">
+      <h5>Extracted ID Image</h5>
+      {% if recognition.extracted_id_image %}
+        <img src="{{ recognition.extracted_id_image.url }}" alt="{{ recognition.name }}" class="img-fluid">
+      {% else %}
+        Image N/A
+      {% endif %}
+      <p class="mt-2">
+        <strong>Status:</strong>
+        {% if recognition.is_success %}
+          <span class="text-success">User successfully recognized</span>
+        {% else %}
+          <span class="text-danger">User recognition failed</span>
+        {% endif %}
+        <br>
+        <a href="{% url 'download_pdf' recognition.id %}" class="btn btn-warning btn-sm">Download PDF</a>
+      </p>
+    </div>
+  </div>
+{% endblock %}

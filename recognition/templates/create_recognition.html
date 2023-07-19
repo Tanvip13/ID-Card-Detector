@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  <style>
+    .carousel-caption {
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+      padding: 20px;
+    }
+        .carousel-item img {
+      height: 400px; /* Set the height of the carousel */
+      object-fit: cover; /* Resize the images to cover the container */
+    }
+
+  </style>
+
+  <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="https://img.freepik.com/free-vector/abstract-wireframe-digital-human-female-face-streaming-matrix-digital-binary-code-background-ai-artificial-intelligence-concept_127544-849.jpg?w=2000&t=st=1680825858~exp=1680826458~hmac=3f3b59346c8b8d5e62c998332db58c39e38b3b0c3838414846275f7e23b21374" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+          <h5>ID Card Detector</h5>
+          <p>Extract the face image from live ID card and recognize with live face..</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <div class="row d-flex justify-content-center mt-4">
+      <div class="col-md-6 mt-4">
+        <form method="POST" class="mt-4">
+              {% csrf_token %}
+            {{ form.name }}
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary mt-4 ">Enter Name</button>
+        </div>
+        </form>
+      </div>
+    </div>
+
+{% endblock %}

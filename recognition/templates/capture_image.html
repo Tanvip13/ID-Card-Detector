@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="text-center mt-3">Capture your live ID Card</h2>
+  <div class="camera-container mt-4">
+    <div id="loader" class="loader"></div>
+    <div class="camera-content">
+      <video id="video" autoplay></video>
+      <canvas width="800" height="700" id="canvas" style="display:none;"></canvas>
+      <button class="btn btn-warning btn-lg" style="margin-left:80px;" id="capture-btn">Capture ID</button>
+    </div>
+  </div>
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('capture-btn');
+    const loader = document.getElementById('loader');
+
+    // Access the camera
+    // Access the camera with the desired resolution
+    navigator.mediaDevices.getUserMedia({
+        video: {
+            width: { ideal: 1000 },
+            height: { ideal: 620 }
+        }
+    })
+    .then(stream => {
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+            loader.style.display = 'none';
+        };
+    })
+    .catch(error => {
+        console.error(error);
+        loader.style.display = 'none';
+    });
+
+    // Establish a WebSocket connection
+    const socket = new WebSocket('ws://' + window.location.host + '/ws/capture_image/');
+
+    // Capture the image when the button is clicked
+    captureBtn.addEventListener('click', () => {
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageDataUrl = canvas.toDataURL('image/jpeg');
+
+        // Send the image data over the WebSocket
+        socket.send(JSON.stringify({
+            'id_image': imageDataUrl,
+            'rec_id': {{rec_id}}
+        }));
+    });
+
+    // Handle messages from the server
+    socket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.status === 'success') {
+            // Handle success
+             if (data.face_id !== null) {
+                  // If face_id is not null, redirect to the success URL
+                  window.location.href = "{% url 'real-time-recognition' rec_id %}";
+              } else {
+                  // Handle the case where face_id is null
+                  alert('Face extraction failed. Please try again');
+              }
+        } else {
+            // Handle errors
+            console.error(data.message);
+        }
+    };
+
+    // Handle WebSocket errors
+    socket.onclose = function(event) {
+        console.error('WebSocket error:', event);
+    };
+</script>
+  <style>
+    .camera-container {
+      display: flex;
+      flex-direction: column;
+      align-items: left;
+      justify-content: left;
+      margin-left: 190px;
+      min-height: 100vh;
+    }
+    .camera-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1000px; /* Adjust as needed */
+    }
+    video {
+      max-width: 100%;
+    }
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 2s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform:
+        rotate(0deg); }
+        100% { transform: rotate(360deg); }
+        }
+</style>
+{% endblock %}

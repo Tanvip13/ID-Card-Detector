@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Capture ID Image</title>
+</head>
+<body>
+    <h1>Capture ID Image</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload ID Image</button>
+    </form>
+</body>
+</html>

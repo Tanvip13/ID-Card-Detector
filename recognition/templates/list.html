@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2 class="text-center mt-4 ">Recognitions List</h2>
+  <table class="table mt-4">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Created At</th>
+        <th>Is Success</th>
+        <th>Detail</th>
+        <th>Download PDF</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for recognition in recognitions %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ recognition.name }}</td>
+          <td>{{ recognition.created_at }}</td>
+          <td>{% if recognition.is_success %} <p class="text-success">Pass</p>{% else %} <p class="text-danger">Fail</p>{% endif %}</td>
+          <td><a href="{% url 'recognition_detail' recognition.id %}" class="btn btn-warning btn-sm">View</a></td>
+          <td><a href="{% url 'download_pdf' recognition.id %}" class="btn btn-warning btn-sm">Download</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
